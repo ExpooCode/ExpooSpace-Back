@@ -14,13 +14,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration  // Le dice a Spring que esta es una clase de configuración
 @OpenAPIDefinition(  // Define la información general de tu API
         info = @Info(
-                title = "Tienda Virtual API",
+                title = "ExpooSpace API",
                 version = "1.0.0",
-                description = "API REST para la gestión completa de una tienda virtual",  // Descripción
+                description = "API REST para la gestión y ventas de espacios de coworking",  // Descripción
                 contact = @Contact(
                         name = "Construccion de Apps Empresariales",
                         email = "",
-                        url = "eam.edu.co"
+                        url = ""
                 ),
                 license = @License(
                         name = "MIT License",
