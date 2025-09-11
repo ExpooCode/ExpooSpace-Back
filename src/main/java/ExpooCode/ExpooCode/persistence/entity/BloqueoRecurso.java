@@ -1,6 +1,6 @@
 package ExpooCode.ExpooCode.persistence.entity;
 
-import ExpooCode.ExpooCode.persistence.entity.enums.EstadoReserva;
+import ExpooCode.ExpooCode.persistence.entity.enums.MotivoBloqueo;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,16 +12,13 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "reserva")
-public class Reserva {
+@Table(name = "bloqueo")
+public class BloqueoRecurso {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_reserva")
-    private Long idReserva;
-
-    @ManyToOne
-    @JoinColumn(name = "id_usuario", nullable = false)
-    private Usuario usuario;
+    @Column(name = "id_bloqueo")
+    private Long idBloqueo;
 
     @ManyToOne
     @JoinColumn(name = "id_recurso", nullable = false)
@@ -34,9 +31,12 @@ public class Reserva {
     private LocalDateTime fechaFin;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "estado", nullable = false)
-    private EstadoReserva estado;
+    @Column(name = "motivo", nullable = false)
+    private MotivoBloqueo motivo;
 
-    @OneToOne(mappedBy = "reserva", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Pago pago;
+    @Column(name = "descripcion", length = 255)
+    private String descripcion;
+
+    @Column(name = "activo", nullable = false)
+    private boolean activo;
 }
