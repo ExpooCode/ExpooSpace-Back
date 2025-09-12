@@ -4,6 +4,7 @@ import ExpooCode.ExpooCode.persistence.entity.Factura;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/expooSpace/facturas")
+@Tag(name = "Factura", description = "Gestión de facturas de los usuarios")
 public class FacturaController {
 
     private List<Factura> facturas = new ArrayList<>();
