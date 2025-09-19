@@ -1,5 +1,5 @@
 package ExpooCode.ExpooCode.business.services;
 
-public class FacturaService {
+public interface FacturaService {
 
 }

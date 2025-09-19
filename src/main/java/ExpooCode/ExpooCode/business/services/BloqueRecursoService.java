@@ -1,5 +1,5 @@
 package ExpooCode.ExpooCode.business.services;
 
-public class BloqueRecursoService {
+public interface BloqueRecursoService {
 
 }

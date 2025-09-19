@@ -1,5 +1,5 @@
 package ExpooCode.ExpooCode.business.services;
 
-public class NotificacionService {
+public interface NotificacionService {
 
 }
