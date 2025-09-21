@@ -1,6 +1,6 @@
 package ExpooCode.ExpooCode.presentation.Controller;
 
-import ExpooCode.ExpooCode.business.services.ReservaService;
+import ExpooCode.ExpooCode.business.service.ReservaService;
 import ExpooCode.ExpooCode.persistence.entity.Reserva;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

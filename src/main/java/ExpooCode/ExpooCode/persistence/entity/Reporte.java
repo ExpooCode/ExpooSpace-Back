@@ -1,5 +1,5 @@
 package ExpooCode.ExpooCode.persistence.entity;
-import ExpooCode.ExpooCode.persistence.entity.enums.TipoReporte;
+import ExpooCode.ExpooCode.persistence.enums.TipoReporte;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

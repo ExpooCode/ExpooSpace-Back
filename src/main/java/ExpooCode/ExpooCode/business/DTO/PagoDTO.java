@@ -1,8 +1,9 @@
 package ExpooCode.ExpooCode.business.DTO;
 
 
-import ExpooCode.ExpooCode.persistence.entity.enums.EstadoPago;
+import ExpooCode.ExpooCode.persistence.enums.EstadoPago;
 
+import ExpooCode.ExpooCode.persistence.enums.MetodoPago;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,10 +30,10 @@ public class PagoDTO {
     @Schema(description = "Monto del pago", example = "150000.00", required = true)
     private BigDecimal monto;
 
-    @Schema(description = "Método de pago utilizado", example = "TARJETA", required = true)
-    private String metodo;
+    @Schema(description = "Método de pago utilizado", example = "Tarjeta", required = true)
+    private MetodoPago metodo;
 
-    @Schema(description = "Estado actual del pago", example = "PENDIENTE", required = true)
+    @Schema(description = "Estado actual del pago", example = "Pendiente", required = true)
     private EstadoPago estado;
 
     @Schema(description = "Fecha en la que se realizó el pago", example = "2025-06-15T14:30:00", accessMode = Schema.AccessMode.READ_ONLY)

@@ -1,6 +1,6 @@
 package ExpooCode.ExpooCode.persistence.entity;
 
-import ExpooCode.ExpooCode.persistence.entity.enums.MotivoBloqueo;
+import ExpooCode.ExpooCode.persistence.enums.MotivoBloqueo;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
