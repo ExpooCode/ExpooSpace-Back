@@ -1,23 +1,29 @@
 package ExpooCode.ExpooCode.presentation.Controller;
 
+import ExpooCode.ExpooCode.business.service.UsuarioService;
+import ExpooCode.ExpooCode.persistence.entity.Usuario;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/api/expooSpace/usuarios")
 @Tag(name = "Usuarios", description = "Operaciones relacionadas con la gestión de usuarios")
 public class UsuarioController {
 
-    // GET: Listar todos los usuarios (solo Admin)
+    private final UsuarioService usuarioService;
+
+    public UsuarioController(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
+    }
+
     @GetMapping
     @Operation(summary = "Listar todos los usuarios", description = "Obtiene una lista de todos los usuarios registrados (solo Admin).")
     @ApiResponses(value = {
@@ -26,14 +32,10 @@ public class UsuarioController {
             @ApiResponse(responseCode = "403", description = "Acceso denegado (no Admin)"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public ResponseEntity<List<String>> listarUsuarios() {
-        List<String> usuarios = new ArrayList<>();
-        usuarios.add("Usuario 1");
-        usuarios.add("Usuario 2");
-        return ResponseEntity.ok(usuarios);
+    public ResponseEntity<List<Usuario>> listarUsuarios() {
+        return ResponseEntity.ok(usuarioService.getAllUsuarios());
     }
 
-    // POST: Crear un nuevo usuario (registro público)
     @PostMapping
     @Operation(summary = "Registrar un nuevo usuario")
     @ApiResponses(value = {
@@ -41,80 +43,83 @@ public class UsuarioController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
-    public ResponseEntity<String> registrarUsuario(
+    public ResponseEntity<Usuario> registrarUsuario(
             @Parameter(description = "Nombre del usuario") @RequestParam String nombre,
-            @Parameter(description = "Email del usuario") @RequestParam String email
+            @Parameter(description = "Email del usuario") @RequestParam String email,
+            @Parameter(description = "Password del usuario") @RequestParam String password
     ) {
-        return ResponseEntity.status(201).body("Usuario registrado: " + nombre + " (" + email + ")");
+        Usuario nuevoUsuario = usuarioService.createUsuario(nombre, email, password);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
     }
 
-    // GET: Obtener usuario por ID
     @GetMapping("/{id}")
     @Operation(summary = "Obtener usuario por ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Usuario encontrado"),
-            @ApiResponse(responseCode = "401", description = "No autenticado"),
-            @ApiResponse(responseCode = "403", description = "Acceso denegado"),
-            @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
-    })
-    public ResponseEntity<String> obtenerUsuarioPorId(
+    public ResponseEntity<Usuario> obtenerUsuarioPorId(
             @Parameter(description = "ID del usuario a buscar", required = true, example = "1")
             @PathVariable Long id
     ) {
-        return ResponseEntity.ok("Usuario con ID: " + id);
+        Usuario usuario = usuarioService.getUsuarioById(id);
+        return ResponseEntity.ok(usuario);
     }
 
-    // PUT: Actualizar usuario
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar usuario")
-    public ResponseEntity<String> actualizarUsuario(
+    public ResponseEntity<Usuario> actualizarUsuario(
             @PathVariable Long id,
-            @RequestParam String nombre
+            @RequestParam String nombre,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String password
     ) {
-        return ResponseEntity.ok("Usuario con ID " + id + " actualizado a nombre: " + nombre);
+        Usuario usuarioActualizado = usuarioService.updateUsuario(id, nombre, email, password);
+        return ResponseEntity.ok(usuarioActualizado);
     }
 
-    // DELETE: Eliminar usuario
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar usuario")
     public ResponseEntity<Void> eliminarUsuario(@PathVariable Long id) {
+        usuarioService.deleteUsuario(id);
         return ResponseEntity.noContent().build();
     }
 
-    // POST: Login
     @PostMapping("/login")
     @Operation(summary = "Iniciar sesión de usuario")
     public ResponseEntity<String> login(
             @RequestParam String email,
             @RequestParam String password
     ) {
-        return ResponseEntity.ok("Usuario logueado: " + email);
+        boolean logged = usuarioService.login(email, password);
+        if (logged) {
+            return ResponseEntity.ok("Usuario logueado: " + email);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales inválidas");
+        }
     }
 
-    // POST: Logout
     @PostMapping("/logout")
     @Operation(summary = "Cerrar sesión de usuario")
     public ResponseEntity<String> logout() {
+        usuarioService.logout();
         return ResponseEntity.ok("Sesión cerrada correctamente");
     }
 
-    // GET: Reservas del usuario
+    @PatchMapping("/{id}/estado")
+    @Operation(summary = "Cambiar el estado del usuario")
+    public ResponseEntity<Usuario> cambiarEstado(@PathVariable Long id) {
+        Usuario usuario = usuarioService.cambiarEstadoUsuario(id);
+        return ResponseEntity.ok(usuario);
+    }
+
     @GetMapping("/{id}/reservas")
     @Operation(summary = "Obtener reservas de un usuario")
     public ResponseEntity<List<String>> obtenerReservasDeUsuario(@PathVariable Long id) {
-        List<String> reservas = new ArrayList<>();
-        reservas.add("Reserva 1 del usuario " + id);
-        reservas.add("Reserva 2 del usuario " + id);
+        List<String> reservas = usuarioService.getReservasDeUsuario(id);
         return ResponseEntity.ok(reservas);
     }
 
-    // GET: Suscripciones del usuario
     @GetMapping("/{id}/suscripciones")
     @Operation(summary = "Obtener suscripciones de un usuario")
     public ResponseEntity<List<String>> obtenerSuscripcionesDeUsuario(@PathVariable Long id) {
-        List<String> suscripciones = new ArrayList<>();
-        suscripciones.add("Suscripción 1 del usuario " + id);
-        suscripciones.add("Suscripción 2 del usuario " + id);
+        List<String> suscripciones = usuarioService.getSuscripcionesDeUsuario(id);
         return ResponseEntity.ok(suscripciones);
     }
 }
