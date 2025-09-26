@@ -1,5 +1,6 @@
 package ExpooCode.ExpooCode.presentation.Controller;
 
+import ExpooCode.ExpooCode.business.DTO.UsuarioDTO;
 import ExpooCode.ExpooCode.business.service.UsuarioService;
 import ExpooCode.ExpooCode.persistence.entity.Usuario;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,52 +26,34 @@ public class UsuarioController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar todos los usuarios", description = "Obtiene una lista de todos los usuarios registrados (solo Admin).")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de usuarios obtenida exitosamente"),
-            @ApiResponse(responseCode = "401", description = "No autenticado"),
-            @ApiResponse(responseCode = "403", description = "Acceso denegado (no Admin)"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-    })
-    public ResponseEntity<List<Usuario>> listarUsuarios() {
+    @Operation(summary = "Listar todos los usuarios")
+    public ResponseEntity<List<UsuarioDTO>> listarUsuarios() {
         return ResponseEntity.ok(usuarioService.getAllUsuarios());
     }
 
     @PostMapping
     @Operation(summary = "Registrar un nuevo usuario")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Usuario registrado exitosamente"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-    })
-    public ResponseEntity<Usuario> registrarUsuario(
-            @Parameter(description = "Nombre del usuario") @RequestParam String nombre,
-            @Parameter(description = "Email del usuario") @RequestParam String email,
-            @Parameter(description = "Password del usuario") @RequestParam String password
+    public ResponseEntity<UsuarioDTO> registrarUsuario(
+            @RequestBody UsuarioDTO usuarioDTO
     ) {
-        Usuario nuevoUsuario = usuarioService.createUsuario(nombre, email, password);
+        UsuarioDTO nuevoUsuario = usuarioService.createUsuario(usuarioDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener usuario por ID")
-    public ResponseEntity<Usuario> obtenerUsuarioPorId(
-            @Parameter(description = "ID del usuario a buscar", required = true, example = "1")
-            @PathVariable Long id
-    ) {
-        Usuario usuario = usuarioService.getUsuarioById(id);
+    public ResponseEntity<UsuarioDTO> obtenerUsuarioPorId(@PathVariable Long id) {
+        UsuarioDTO usuario = usuarioService.getUsuarioById(id);
         return ResponseEntity.ok(usuario);
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar usuario")
-    public ResponseEntity<Usuario> actualizarUsuario(
+    public ResponseEntity<UsuarioDTO> actualizarUsuario(
             @PathVariable Long id,
-            @RequestParam String nombre,
-            @RequestParam(required = false) String email,
-            @RequestParam(required = false) String password
+            @RequestBody UsuarioDTO usuarioDTO
     ) {
-        Usuario usuarioActualizado = usuarioService.updateUsuario(id, nombre, email, password);
+        UsuarioDTO usuarioActualizado = usuarioService.updateUsuario(id, usuarioDTO);
         return ResponseEntity.ok(usuarioActualizado);
     }
 
@@ -83,13 +66,10 @@ public class UsuarioController {
 
     @PostMapping("/login")
     @Operation(summary = "Iniciar sesión de usuario")
-    public ResponseEntity<String> login(
-            @RequestParam String email,
-            @RequestParam String password
-    ) {
-        boolean logged = usuarioService.login(email, password);
+    public ResponseEntity<String> login(@RequestBody UsuarioDTO usuarioDTO) {
+        boolean logged = usuarioService.login(usuarioDTO.getEmail(), usuarioDTO.getPassword());
         if (logged) {
-            return ResponseEntity.ok("Usuario logueado: " + email);
+            return ResponseEntity.ok("Usuario logueado: " + usuarioDTO.getEmail());
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales inválidas");
         }
@@ -104,8 +84,8 @@ public class UsuarioController {
 
     @PatchMapping("/{id}/estado")
     @Operation(summary = "Cambiar el estado del usuario")
-    public ResponseEntity<Usuario> cambiarEstado(@PathVariable Long id) {
-        Usuario usuario = usuarioService.cambiarEstadoUsuario(id);
+    public ResponseEntity<UsuarioDTO> cambiarEstado(@PathVariable Long id) {
+        UsuarioDTO usuario = usuarioService.cambiarEstadoUsuario(id);
         return ResponseEntity.ok(usuario);
     }
 

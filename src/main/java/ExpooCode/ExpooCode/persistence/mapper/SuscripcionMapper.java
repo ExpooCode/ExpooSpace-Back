@@ -2,6 +2,7 @@ package ExpooCode.ExpooCode.persistence.mapper;
 
 import ExpooCode.ExpooCode.business.DTO.SuscripcionDTO;
 import ExpooCode.ExpooCode.persistence.entity.Suscripcion;
+import ExpooCode.ExpooCode.persistence.entity.Usuario;
 import org.mapstruct.*;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface SuscripcionMapper {
 
     // De DTO a entidad (crear)
     @Mapping(target = "idSuscripcion", ignore = true) // Generado por la BD
-    @Mapping(target = "usuario", source = "idUsuario", qualifiedByName = "createUsuarioFromId")
+    @Mapping(target = "usuario", source = "idUsuario")
     Suscripcion toEntity(SuscripcionDTO dto);
 
     // Actualización parcial
@@ -27,4 +28,19 @@ public interface SuscripcionMapper {
     @Mapping(target = "usuario", ignore = true) // Usuario no cambia en update
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDTO(SuscripcionDTO dto, @MappingTarget Suscripcion suscripcion);
+
+    // 🔹 Helper: Long -> Usuario
+    default Usuario map(Long idUsuario) {
+        if (idUsuario == null) {
+            return null;
+        }
+        Usuario usuario = new Usuario();
+        usuario.setIdUsuario(idUsuario);
+        return usuario;
+    }
+
+    // 🔹 Helper: Usuario -> Long
+    default Long map(Usuario usuario) {
+        return (usuario != null) ? usuario.getIdUsuario() : null;
+    }
 }

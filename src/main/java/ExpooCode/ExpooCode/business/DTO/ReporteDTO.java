@@ -1,6 +1,7 @@
 package ExpooCode.ExpooCode.business.DTO;
 
 import ExpooCode.ExpooCode.persistence.enums.Tipo;
+import ExpooCode.ExpooCode.persistence.enums.TipoReporte;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,7 +22,7 @@ public class ReporteDTO {
     private Long idUsuario;
 
     @Schema(description = "Tipo de reporte", example = "Ocupacion", required = true)
-    private Tipo tipo;
+    private TipoReporte tipo;
 
     @Schema(description = "Fecha de generación del reporte", example = "2025-04-05T09:00:00", accessMode = Schema.AccessMode.READ_ONLY)
     private LocalDateTime fechaGeneracion;

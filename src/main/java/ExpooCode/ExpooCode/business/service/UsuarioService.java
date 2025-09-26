@@ -1,6 +1,6 @@
 package ExpooCode.ExpooCode.business.service;
 
-import ExpooCode.ExpooCode.persistence.entity.Usuario;
+import ExpooCode.ExpooCode.business.DTO.UsuarioDTO;
 import java.util.List;
 
 public interface UsuarioService {
@@ -10,18 +10,16 @@ public interface UsuarioService {
      *
      * @return Lista completa de usuarios
      */
-    List<Usuario> getAllUsuarios();
+    List<UsuarioDTO> getAllUsuarios();
 
     /**
      * Crear un nuevo usuario
      *
-     * @param nombre   Nombre del usuario
-     * @param email    Correo electrónico del usuario
-     * @param password Contraseña del usuario
+     * @param usuarioDTO DTO con los datos del usuario
      * @return Usuario creado con ID generado
      * @throws IllegalArgumentException Si los datos no son válidos
      */
-    Usuario createUsuario(String nombre, String email, String password);
+    UsuarioDTO createUsuario(UsuarioDTO usuarioDTO);
 
     /**
      * Buscar un usuario por ID
@@ -30,19 +28,17 @@ public interface UsuarioService {
      * @return Usuario encontrado
      * @throws RuntimeException Si el usuario no existe
      */
-    Usuario getUsuarioById(Long id);
+    UsuarioDTO getUsuarioById(Long id);
 
     /**
      * Actualizar un usuario existente
      *
-     * @param id       ID del usuario a actualizar
-     * @param nombre   Nuevo nombre
-     * @param email    Nuevo correo electrónico
-     * @param password Nueva contraseña
+     * @param id         ID del usuario a actualizar
+     * @param usuarioDTO DTO con nuevos valores
      * @return Usuario actualizado
      * @throws RuntimeException Si el usuario no existe
      */
-    Usuario updateUsuario(Long id, String nombre, String email, String password);
+    UsuarioDTO updateUsuario(Long id, UsuarioDTO usuarioDTO);
 
     /**
      * Eliminar un usuario
@@ -89,5 +85,5 @@ public interface UsuarioService {
      * @return Usuario con el estado actualizado
      * @throws RuntimeException Si el usuario no existe
      */
-    Usuario cambiarEstadoUsuario(Long id);
+    UsuarioDTO cambiarEstadoUsuario(Long id);
 }
