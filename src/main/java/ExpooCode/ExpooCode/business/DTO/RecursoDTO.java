@@ -1,5 +1,6 @@
 package ExpooCode.ExpooCode.business.DTO;
 
+import ExpooCode.ExpooCode.persistence.enums.EstadoRecurso;
 import ExpooCode.ExpooCode.persistence.enums.EstadoUsuario;
 import ExpooCode.ExpooCode.persistence.enums.Tipo;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -29,5 +30,5 @@ public class RecursoDTO {
 
     @Enumerated(EnumType.STRING)
     @Schema(description = "Estado del recurso", example = "Activo", required = true)
-    private EstadoUsuario estadoUsuario;
+    private EstadoRecurso estadoRecurso;
 }

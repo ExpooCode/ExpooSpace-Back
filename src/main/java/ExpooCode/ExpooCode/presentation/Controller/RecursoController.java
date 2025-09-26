@@ -1,6 +1,7 @@
 package ExpooCode.ExpooCode.presentation.Controller;
 
-import ExpooCode.ExpooCode.persistence.entity.Recurso;
+import ExpooCode.ExpooCode.business.DTO.RecursoDTO;
+import ExpooCode.ExpooCode.business.service.RecursoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -9,16 +10,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/expooSpace/recursos")
 @Tag(name = "Recursos", description = "Gestión de recursos disponibles en la plataforma")
 public class RecursoController {
 
-    private final Map<Integer, Recurso> recursos = new HashMap<>();
-    private final AtomicInteger idGenerator = new AtomicInteger(1);
+    private final RecursoService recursoService;
+
+    public RecursoController(RecursoService recursoService) {
+        this.recursoService = recursoService;
+    }
 
     @Operation(summary = "Listar recursos", description = "Obtiene todos los recursos disponibles (público)")
     @ApiResponses(value = {
@@ -26,8 +30,8 @@ public class RecursoController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @GetMapping
-    public ResponseEntity<List<Recurso>> listarRecursos() {
-        return ResponseEntity.ok(new ArrayList<>(recursos.values()));
+    public ResponseEntity<List<RecursoDTO>> listarRecursos() {
+        return ResponseEntity.ok(recursoService.getAllRecursos());
     }
 
     @Operation(summary = "Registrar recurso", description = "Crea un nuevo recurso en el sistema (solo Admin)")
@@ -37,14 +41,12 @@ public class RecursoController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @PostMapping
-    public ResponseEntity<Recurso> registrarRecurso(@RequestBody Recurso recurso) {
-        if (recurso == null || recurso.getNombre() == null) {
+    public ResponseEntity<RecursoDTO> registrarRecurso(@RequestBody RecursoDTO recursoDTO) {
+        if (recursoDTO == null || recursoDTO.getNombre() == null) {
             return ResponseEntity.badRequest().build();
         }
-        int id = idGenerator.getAndIncrement();
-        recurso.setIdRecurso(id);
-        recursos.put(id, recurso);
-        return ResponseEntity.status(HttpStatus.CREATED).body(recurso);
+        RecursoDTO creado = recursoService.createRecurso(recursoDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
     @Operation(summary = "Obtener recurso por ID", description = "Consulta el detalle de un recurso específico (público)")
@@ -54,12 +56,10 @@ public class RecursoController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<Recurso> obtenerRecurso(@PathVariable Integer id) {
-        Recurso recurso = recursos.get(id);
-        if (recurso == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        return ResponseEntity.ok(recurso);
+    public ResponseEntity<RecursoDTO> obtenerRecurso(@PathVariable Long id) {
+        return recursoService.getRecursoById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @Operation(summary = "Actualizar recurso", description = "Modifica la información de un recurso existente (solo Admin)")
@@ -70,13 +70,10 @@ public class RecursoController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<Recurso> actualizarRecurso(@PathVariable Integer id, @RequestBody Recurso recurso) {
-        if (!recursos.containsKey(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        recurso.setIdRecurso(id);
-        recursos.put(id, recurso);
-        return ResponseEntity.ok(recurso);
+    public ResponseEntity<RecursoDTO> actualizarRecurso(@PathVariable Long id, @RequestBody RecursoDTO recursoDTO) {
+        return recursoService.updateRecurso(id, recursoDTO)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @Operation(summary = "Eliminar recurso", description = "Elimina un recurso del sistema (solo Admin)")
@@ -86,11 +83,11 @@ public class RecursoController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarRecurso(@PathVariable Integer id) {
-        if (!recursos.containsKey(id)) {
+    public ResponseEntity<Void> eliminarRecurso(@PathVariable Long id) {
+        boolean eliminado = recursoService.deleteRecurso(id);
+        if (!eliminado) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        recursos.remove(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -101,9 +98,8 @@ public class RecursoController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     @GetMapping("/{id}/disponibilidad")
-    public ResponseEntity<String> verificarDisponibilidad(@PathVariable Integer id) {
-        Recurso recurso = recursos.get(id);
-        if (recurso == null) {
+    public ResponseEntity<String> verificarDisponibilidad(@PathVariable Long id) {
+        if (recursoService.getRecursoById(id).isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.ok("Disponibilidad verificada para el recurso con ID: " + id);
@@ -116,10 +112,6 @@ public class RecursoController {
     })
     @GetMapping("/tipos")
     public ResponseEntity<Set<String>> obtenerTipos() {
-        Set<String> tipos = new HashSet<>();
-        for (Recurso r : recursos.values()) {
-            tipos.add(r.getTipo().name());
-        }
-        return ResponseEntity.ok(tipos);
+        return ResponseEntity.ok(recursoService.getTiposDeRecursos());
     }
 }
