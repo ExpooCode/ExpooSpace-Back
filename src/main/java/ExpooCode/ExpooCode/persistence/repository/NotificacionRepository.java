@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface NotificacionRepository extends JpaRepository<Notificacion, Long> {
-
+    long countByLeidoFalse();
 }
