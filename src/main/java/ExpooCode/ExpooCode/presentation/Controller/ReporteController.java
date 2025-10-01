@@ -1,6 +1,7 @@
 package ExpooCode.ExpooCode.presentation.Controller;
 
-import ExpooCode.ExpooCode.persistence.entity.Reporte;
+import ExpooCode.ExpooCode.business.DTO.ReporteDTO;
+import ExpooCode.ExpooCode.business.service.ReporteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -9,94 +10,53 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
 @RequestMapping("/api/expooSpace/reportes")
 @Tag(name = "Reportes", description = "Gestión y generación de reportes (solo Admin)")
 public class ReporteController {
 
-    private final Map<Long, Reporte> reportes = new HashMap<>();
-    private final AtomicLong idGenerator = new AtomicLong(1);
+    private final ReporteService reporteService;
 
-    @Operation(summary = "Listar reportes", description = "Obtiene todos los reportes generados (solo Admin)")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Listado de reportes obtenido correctamente"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-    })
+    public ReporteController(ReporteService reporteService) {
+        this.reporteService = reporteService;
+    }
+
+    @Operation(summary = "Listar reportes")
     @GetMapping
-    public ResponseEntity<List<Reporte>> listarReportes() {
-        return ResponseEntity.ok(new ArrayList<>(reportes.values()));
+    public ResponseEntity<List<ReporteDTO>> listarReportes() {
+        return ResponseEntity.ok(reporteService.listarReportes());
     }
 
-    @Operation(summary = "Generar reporte", description = "Crea un nuevo reporte en el sistema (solo Admin)")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Reporte generado correctamente"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-    })
+    @Operation(summary = "Generar reporte")
     @PostMapping
-    public ResponseEntity<Reporte> generarReporte(@RequestBody Reporte reporte) {
-        if (reporte == null || reporte.getContenido() == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        long id = idGenerator.getAndIncrement();
-        reporte.setIdReporte(id);
-        reportes.put(id, reporte);
-        return ResponseEntity.status(HttpStatus.CREATED).body(reporte);
+    public ResponseEntity<ReporteDTO> generarReporte(@RequestBody ReporteDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(reporteService.generarReporte(dto));
     }
 
-    @Operation(summary = "Obtener reporte por ID", description = "Consulta el detalle de un reporte específico (solo Admin)")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Reporte encontrado"),
-            @ApiResponse(responseCode = "404", description = "Reporte no encontrado"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-    })
+    @Operation(summary = "Obtener reporte por ID")
     @GetMapping("/{id}")
-    public ResponseEntity<Reporte> obtenerReporte(@PathVariable Long id) {
-        Reporte reporte = reportes.get(id);
-        if (reporte == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        return ResponseEntity.ok(reporte);
+    public ResponseEntity<ReporteDTO> obtenerReporte(@PathVariable Long id) {
+        ReporteDTO reporte = reporteService.obtenerReporte(id);
+        return reporte != null ? ResponseEntity.ok(reporte) : ResponseEntity.notFound().build();
     }
 
-    @Operation(summary = "Exportar reporte", description = "Exporta un reporte generado en formato CSV/Excel (solo Admin)")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Reporte exportado correctamente"),
-            @ApiResponse(responseCode = "404", description = "Reporte no encontrado"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-    })
-    @GetMapping("/{id}/exportar")
-    public ResponseEntity<String> exportarReporte(@PathVariable Long id) {
-        Reporte reporte = reportes.get(id);
-        if (reporte == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        return ResponseEntity.ok("Exportando reporte con ID: " + id);
+    @Operation(summary = "Eliminar reporte por ID")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarReporte(@PathVariable Long id) {
+        return reporteService.eliminarReporte(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
-    @Operation(summary = "Generar reporte de ocupación", description = "Genera un reporte específico de ocupación (solo Admin)")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Reporte de ocupación generado correctamente"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-    })
+    @Operation(summary = "Generar reporte de ocupación")
     @PostMapping("/ocupacion")
-    public ResponseEntity<String> generarReporteOcupacion() {
-        return ResponseEntity.status(HttpStatus.CREATED).body("Reporte de ocupación generado");
+    public ResponseEntity<ReporteDTO> generarReporteOcupacion() {
+        return ResponseEntity.status(HttpStatus.CREATED).body(reporteService.generarReporteOcupacion());
     }
 
-    @Operation(summary = "Generar reporte de ingresos", description = "Genera un reporte específico de ingresos (solo Admin)")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Reporte de ingresos generado correctamente"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-    })
+    @Operation(summary = "Generar reporte de ingresos")
     @PostMapping("/ingresos")
-    public ResponseEntity<String> generarReporteIngresos() {
-        return ResponseEntity.status(HttpStatus.CREATED).body("Reporte de ingresos generado");
+    public ResponseEntity<ReporteDTO> generarReporteIngresos() {
+        return ResponseEntity.status(HttpStatus.CREATED).body(reporteService.generarReporteIngresos());
     }
 }
