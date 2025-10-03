@@ -7,6 +7,7 @@ import ExpooCode.ExpooCode.persistence.enums.EstadoUsuario;
 import ExpooCode.ExpooCode.persistence.mapper.UsuarioMapper;
 import ExpooCode.ExpooCode.persistence.repository.UsuarioRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +37,12 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional
     public UsuarioDTO createUsuario(UsuarioDTO usuarioDTO) {
+        if (usuarioRepository.existsByEmail(usuarioDTO.getEmail())) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    HttpStatus.CONFLICT, // Código 409
+                    "Ya existe un usuario con el email: " + usuarioDTO.getEmail()
+            );
+        }
         Usuario usuario = usuarioMapper.toEntity(usuarioDTO);
         usuario.setEstado(EstadoUsuario.Activo); // Estado inicial por defecto
         Usuario saved = usuarioRepository.save(usuario);
