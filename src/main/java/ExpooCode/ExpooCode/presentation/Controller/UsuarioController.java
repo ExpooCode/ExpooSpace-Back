@@ -29,8 +29,6 @@ public class UsuarioController {
     @Operation(summary = "Listar todos los usuarios")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista obtenida exitosamente"),
-            @ApiResponse(responseCode = "401", description = "No autenticado"),
-            @ApiResponse(responseCode = "403", description = "Acceso denegado"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<List<UsuarioDTO>> listarUsuarios() {
@@ -59,6 +57,11 @@ public class UsuarioController {
     })
     public ResponseEntity<UsuarioDTO> obtenerUsuarioPorId(@PathVariable Long id) {
         UsuarioDTO usuario = usuarioService.getUsuarioById(id);
+
+        if (usuario == null) {
+            return ResponseEntity.notFound().build();
+        }
+
         return ResponseEntity.ok(usuario);
     }
 
@@ -66,9 +69,7 @@ public class UsuarioController {
     @Operation(summary = "Actualizar usuario")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuario actualizado exitosamente"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<UsuarioDTO> actualizarUsuario(@PathVariable Long id, @RequestBody UsuarioDTO usuarioDTO) {
         UsuarioDTO usuarioActualizado = usuarioService.updateUsuario(id, usuarioDTO);

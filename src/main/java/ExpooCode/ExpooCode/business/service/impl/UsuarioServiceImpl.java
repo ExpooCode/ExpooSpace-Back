@@ -7,6 +7,7 @@ import ExpooCode.ExpooCode.persistence.enums.EstadoUsuario;
 import ExpooCode.ExpooCode.persistence.mapper.UsuarioMapper;
 import ExpooCode.ExpooCode.persistence.repository.UsuarioRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,14 +53,20 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional(readOnly = true)
     public UsuarioDTO getUsuarioById(Long id) {
+        if (id <= 0) {
+            throw new RuntimeException("Error interno: ID inválido");
+        }
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
         return usuarioMapper.toDTO(usuario);
     }
 
     @Override
     @Transactional
     public UsuarioDTO updateUsuario(Long id, UsuarioDTO usuarioDTO) {
+        if (usuarioDTO.getEmail() != null && !usuarioDTO.getEmail().contains("@")) {
+            throw new IllegalArgumentException("Email inválido");
+        }
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
