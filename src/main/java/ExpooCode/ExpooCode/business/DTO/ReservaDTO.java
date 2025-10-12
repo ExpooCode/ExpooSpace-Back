@@ -1,5 +1,7 @@
 package ExpooCode.ExpooCode.business.DTO;
 
+import ExpooCode.ExpooCode.persistence.enums.EstadoPago;
+import ExpooCode.ExpooCode.persistence.enums.EstadoReserva;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,12 +36,12 @@ public class ReservaDTO {
     @Schema(description = "Fecha y hora de fin de la reserva", example = "2025-09-20T12:00:00", required = true)
     private LocalDateTime fechaFin;
 
-    @Schema(description = "Estado actual de la reserva", example = "CONFIRMADA", required = true)
-    private String estado;
+    @Schema(description = "Estado actual de la reserva", example = "Confirmada", required = true)
+    private EstadoReserva estado;
 
     @Schema(description = "ID del pago asociado (si existe)", example = "5001")
     private Long pagoId;
 
-    @Schema(description = "Estado del pago asociado", example = "PAGADO", accessMode = Schema.AccessMode.READ_ONLY)
-    private String pagoEstado;
+    @Schema(description = "Estado del pago asociado", example = "Pagado", accessMode = Schema.AccessMode.READ_ONLY)
+    private EstadoPago pagoEstado;
 }

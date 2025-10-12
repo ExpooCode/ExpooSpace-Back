@@ -25,7 +25,7 @@ public class BloqueoRecursoDTO {
     @Schema(description = "Fecha de fin del bloqueo", example = "2025-09-20T18:00:00", required = true)
     private LocalDateTime fechaFin;
 
-    @Schema(description = "Motivo del bloqueo", example = "MANTENIMIENTO", required = true)
+    @Schema(description = "Motivo del bloqueo", example = "Mantenimiento", required = true)
     private String motivo;
 
     @Schema(description = "Descripción adicional del bloqueo", example = "Revisión técnica programada", required = false)

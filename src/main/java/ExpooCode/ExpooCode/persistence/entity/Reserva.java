@@ -1,6 +1,6 @@
 package ExpooCode.ExpooCode.persistence.entity;
 
-import ExpooCode.ExpooCode.persistence.entity.enums.EstadoReserva;
+import ExpooCode.ExpooCode.persistence.enums.EstadoReserva;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

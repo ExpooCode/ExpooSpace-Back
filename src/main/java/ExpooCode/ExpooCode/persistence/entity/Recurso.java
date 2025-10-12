@@ -1,7 +1,7 @@
 package ExpooCode.ExpooCode.persistence.entity;
 
-import ExpooCode.ExpooCode.persistence.entity.enums.EstadoUsuario;
-import ExpooCode.ExpooCode.persistence.entity.enums.Tipo;
+import ExpooCode.ExpooCode.persistence.enums.EstadoUsuario;
+import ExpooCode.ExpooCode.persistence.enums.Tipo;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

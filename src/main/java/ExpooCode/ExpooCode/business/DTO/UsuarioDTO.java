@@ -1,6 +1,10 @@
 package ExpooCode.ExpooCode.business.DTO;
 
+import ExpooCode.ExpooCode.persistence.enums.EstadoUsuario;
+import ExpooCode.ExpooCode.persistence.enums.RolUsuario;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,9 +27,10 @@ public class UsuarioDTO {
     @Schema(description = "Contraseña del usuario", example = "Password123", required = true, minLength = 8)
     private String password;
 
-    @Schema(description = "Rol asignado al usuario", example = "ADMIN", required = true)
-    private String rol;
+    @Schema(description = "Rol asignado al usuario", example = "Admin", required = true)
+    private RolUsuario rol;
 
-    @Schema(description = "Estado actual del usuario", example = "ACTIVO", required = true)
-    private String estado;
+    @Enumerated(EnumType.STRING)
+    @Schema(description = "Estado actual del usuario", example = "Activo", required = true)
+    private EstadoUsuario estado;
 }

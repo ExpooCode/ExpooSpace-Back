@@ -1,6 +1,6 @@
 package ExpooCode.ExpooCode.persistence.entity;
-import ExpooCode.ExpooCode.persistence.entity.enums.EstadoPago;
-import ExpooCode.ExpooCode.persistence.entity.enums.MetodoPago;
+import ExpooCode.ExpooCode.persistence.enums.EstadoPago;
+import ExpooCode.ExpooCode.persistence.enums.MetodoPago;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
