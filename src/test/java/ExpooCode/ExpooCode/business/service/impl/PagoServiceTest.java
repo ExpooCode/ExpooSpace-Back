@@ -1,7 +1,10 @@
 package ExpooCode.ExpooCode.business.service.impl;
 
+import ExpooCode.ExpooCode.persistence.dao.PagoDao;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
@@ -16,5 +19,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 @DisplayName("PagoService - Unit Tests")
 public class PagoServiceTest {
+    // DEPENDENCIAS MOCKEADAS
+    @Mock
+    private PagoDao pagoDao;
 
+    // CLASE BAJO PRUEBA (System Under Test)
+    @InjectMocks
+    private PagoServiceImpl pagoService;
 }

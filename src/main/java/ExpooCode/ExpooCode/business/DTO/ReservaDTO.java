@@ -30,6 +30,12 @@ public class ReservaDTO {
     @Schema(description = "Nombre del recurso reservado", example = "Sala de reuniones principal", accessMode = Schema.AccessMode.READ_ONLY)
     private String recursoNombre;
 
+    @Schema(description = "ID del extra reservado", example = "4", required = true)
+    private int extraId;
+
+    @Schema(description = "Nombre del extra reservado", example = "Proyector", accessMode = Schema.AccessMode.READ_ONLY)
+    private String extraNombre;
+
     @Schema(description = "Fecha y hora de inicio de la reserva", example = "2025-09-20T10:00:00", required = true)
     private LocalDateTime fechaInicio;
 

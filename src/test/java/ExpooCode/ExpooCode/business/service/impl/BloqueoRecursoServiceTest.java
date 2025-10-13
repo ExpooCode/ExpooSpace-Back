@@ -2,6 +2,8 @@ package ExpooCode.ExpooCode.business.service.impl;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
@@ -16,5 +18,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 @DisplayName("BloqueoRecursoService - Unit Tests")
 public class BloqueoRecursoServiceTest {
+    // DEPENDENCIAS MOCKEADAS
+    @Mock
+    private BloqueoDao bloqueoDao; //No se ha hecho el controlador
 
+    // CLASE BAJO PRUEBA (System Under Test)
+    @InjectMocks
+    private BloqueoRecursoServiceImpl bloqueoRecursoServiceImpl;
 }

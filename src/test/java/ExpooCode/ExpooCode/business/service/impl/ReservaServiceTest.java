@@ -20,7 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public class ReservaServiceTest {
     // DEPENDENCIAS MOCKEADAS
     @Mock
-    private ProductDAO productDAO;
+    private ProductDAO productDAO; //Todavía no está hecho el controlador entonces no hay Dao
 
     // CLASE BAJO PRUEBA (System Under Test)
     @InjectMocks
