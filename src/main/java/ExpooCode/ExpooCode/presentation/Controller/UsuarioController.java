@@ -69,7 +69,8 @@ public class UsuarioController {
     @Operation(summary = "Actualizar usuario")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuario actualizado exitosamente"),
-            @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
+            @ApiResponse(responseCode = "400", description = "Usuario con dato invalido"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
     public ResponseEntity<UsuarioDTO> actualizarUsuario(@PathVariable Long id, @RequestBody UsuarioDTO usuarioDTO) {
         UsuarioDTO usuarioActualizado = usuarioService.updateUsuario(id, usuarioDTO);
@@ -80,8 +81,7 @@ public class UsuarioController {
     @Operation(summary = "Eliminar usuario")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Usuario eliminado exitosamente"),
-            @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
     public ResponseEntity<Void> eliminarUsuario(@PathVariable Long id) {
         usuarioService.deleteUsuario(id);
@@ -93,7 +93,6 @@ public class UsuarioController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Login exitoso"),
             @ApiResponse(responseCode = "401", description = "Credenciales inválidas"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<String> login(@RequestBody UsuarioDTO usuarioDTO) {
         boolean logged = usuarioService.login(usuarioDTO.getEmail(), usuarioDTO.getPassword());
@@ -108,7 +107,7 @@ public class UsuarioController {
     @Operation(summary = "Cerrar sesión de usuario")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sesión cerrada exitosamente"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            //@ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<String> logout() {
         usuarioService.logout();

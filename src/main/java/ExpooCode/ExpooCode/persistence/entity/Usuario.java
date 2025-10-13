@@ -2,6 +2,7 @@ package ExpooCode.ExpooCode.persistence.entity;
 
 import ExpooCode.ExpooCode.persistence.enums.EstadoUsuario;
 import ExpooCode.ExpooCode.persistence.enums.RolUsuario;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,14 +40,16 @@ public class Usuario {
     private EstadoUsuario estado;
 
     // Relaciones
-
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Reserva> reservas;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Notificacion> notificaciones;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Reporte> reportes;
 
     /*@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)

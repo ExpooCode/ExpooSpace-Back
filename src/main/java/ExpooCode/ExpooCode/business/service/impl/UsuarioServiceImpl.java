@@ -6,6 +6,7 @@ import ExpooCode.ExpooCode.persistence.entity.Usuario;
 import ExpooCode.ExpooCode.persistence.enums.EstadoUsuario;
 import ExpooCode.ExpooCode.persistence.mapper.UsuarioMapper;
 import ExpooCode.ExpooCode.persistence.repository.UsuarioRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
@@ -64,11 +65,12 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional
     public UsuarioDTO updateUsuario(Long id, UsuarioDTO usuarioDTO) {
-        if (usuarioDTO.getEmail() != null && !usuarioDTO.getEmail().contains("@")) {
-            throw new IllegalArgumentException("Email inválido");
-        }
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+
+        if (usuarioDTO.getEmail() != null && !usuarioDTO.getEmail().contains("@")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email inválido");
+        }
 
         if (usuarioDTO.getNombre() != null) usuario.setNombre(usuarioDTO.getNombre());
         if (usuarioDTO.getEmail() != null) usuario.setEmail(usuarioDTO.getEmail());
@@ -84,7 +86,9 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     public void deleteUsuario(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Usuario no encontrado con ID: " + id));
+
         usuarioRepository.delete(usuario);
     }
 
