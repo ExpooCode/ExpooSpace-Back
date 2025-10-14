@@ -38,6 +38,12 @@ public class PagoServiceImpl implements PagoService {
     public PagoDTO createPago(PagoDTO pagoDTO) {
         Pago pago = pagoMapper.toEntity(pagoDTO);
         pago.setEstado(EstadoPago.Pendiente); // Estado inicial por defecto
+        if (pagoDTO.getIdSuscripcion() != null) {
+            //sus
+           // pago.setSuscripcion();
+        } else if (pagoDTO.getIdReserva() != null) {
+
+        }
         pago.setFechaPago(LocalDateTime.now()); //pasar la fecha actual al crear el pago
         Pago saved = pagoDao.save(pago);
         return pagoMapper.toDTO(saved);

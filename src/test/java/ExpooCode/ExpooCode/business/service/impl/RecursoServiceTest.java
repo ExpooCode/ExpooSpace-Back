@@ -1,7 +1,10 @@
 package ExpooCode.ExpooCode.business.service.impl;
 
+import ExpooCode.ExpooCode.persistence.dao.RecursoDao;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
@@ -16,5 +19,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 @DisplayName("RecursoService - Unit Tests")
 public class RecursoServiceTest {
+    // DEPENDENCIAS MOCKEADAS
+    @Mock
+    private RecursoDao recursoDao;
 
+    // CLASE BAJO PRUEBA (System Under Test)
+    @InjectMocks
+    private RecursoServiceImpl recursoService;
 }

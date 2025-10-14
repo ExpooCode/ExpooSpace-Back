@@ -21,7 +21,7 @@ public class RecursoDTO {
     @Schema(description = "Nombre del recurso", example = "Sala de Reuniones A", required = true)
     private String nombre;
 
-    @Schema(description = "Tipo de recurso", example = "Escritorio", required = true)
+    @Schema(description = "Tipo de recurso", example = "SalaDeReuniones", required = true)
     private Tipo tipo;
 
     @Schema(description = "Capacidad del recurso (número de personas o unidades)", example = "20", required = true)
