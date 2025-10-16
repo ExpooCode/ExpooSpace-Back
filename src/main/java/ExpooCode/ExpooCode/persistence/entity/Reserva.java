@@ -28,7 +28,7 @@ public class Reserva {
     private Recurso recurso;
 
     @ManyToOne
-    @JoinColumn(name = "id_extra", nullable = false)
+    @JoinColumn(name = "id_extra", nullable = true)
     private Extra extra;
 
     @Column(name = "fecha_inicio", nullable = false)

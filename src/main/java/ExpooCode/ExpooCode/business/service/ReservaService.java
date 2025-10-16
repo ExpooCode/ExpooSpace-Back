@@ -1,74 +1,68 @@
 package ExpooCode.ExpooCode.business.service;
 
-import ExpooCode.ExpooCode.persistence.entity.Reserva;
+import ExpooCode.ExpooCode.business.DTO.ReservaDTO;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ReservaService {
 
     /**
-     * Crear una nueva reserva
-     * @param reserva Entidad con los datos de la reserva a crear
-     * @return Reserva creada con ID generado
-     * @throws IllegalArgumentException Si los datos no son válidos
-     * @throws RuntimeException Si el recurso no está disponible
+     * Crear una nueva reserva.
+     *
+     * @param reservaDTO Datos de la reserva a crear.
+     * @return ReservaDTO creada con ID generado.
+     * @throws IllegalArgumentException Si los datos no son válidos.
+     * @throws RuntimeException Si el recurso no está disponible.
      */
-    Reserva createReserva(Reserva reserva);
+    @Transactional
+    ReservaDTO createReserva(ReservaDTO reservaDTO);
 
     /**
-     * Buscar una reserva por ID
+     * Buscar una reserva por ID.
      *
-     * @param id ID de la reserva
-     * @return Reserva encontrada
-     * @throws RuntimeException Si la reserva no existe
+     * @param id ID de la reserva.
+     * @return Optional con la reserva encontrada.
+     * @throws RuntimeException Si la reserva no existe.
      */
-    Reserva getReservaById(Long id);
+    @Transactional(readOnly = true)
+    ReservaDTO getReservaById(Long id);
 
     /**
-     * Listar todas las reservas
+     * Listar todas las reservas.
      *
-     * @return Lista completa de reservas
+     * @return Lista completa de reservas.
      */
-    List<Reserva> getAllReservas();
+    @Transactional(readOnly = true)
+    List<ReservaDTO> getAllReservas();
 
     /**
-     * Actualizar una reserva existente
+     * Buscar reservas por ID de usuario.
      *
-     * RESTRICCIONES:
-     * - No se puede cambiar el recurso una vez creada
-     * - Validar nuevas fechas y disponibilidad
-     *
-     * @param id ID de la reserva a actualizar
-     * @param reserva Datos actualizados
-     * @return Reserva actualizada
-     * @throws RuntimeException Si la reserva no existe
+     * @param idUsuario ID del usuario.
+     * @return Lista de reservas asociadas al usuario.
      */
-    Reserva updateReserva(Long id, Reserva reserva);
+    @Transactional(readOnly = true)
+    List<ReservaDTO> getReservasByUsuario(Long idUsuario);
 
     /**
-     * Eliminar una reserva
+     * Actualizar una reserva existente.
      *
-     * @param id ID de la reserva a eliminar
-     * @throws RuntimeException Si la reserva no existe
+     * @param id ID de la reserva a actualizar.
+     * @param reservaDTO Datos actualizados.
+     * @return Optional con la reserva actualizada.
+     * @throws RuntimeException Si la reserva no existe.
      */
-    void deleteReserva(Long id);
+    @Transactional
+    ReservaDTO updateReserva(Long id, ReservaDTO reservaDTO);
 
     /**
-     * Buscar reservas por recurso
+     * Eliminar una reserva.
      *
-     * @param recursoId ID del recurso
-     * @return Lista de reservas asociadas al recurso
+     * @param id ID de la reserva a eliminar.
+     * @return true si la reserva fue eliminada correctamente.
+     * @throws RuntimeException Si la reserva no existe.
      */
-    List<Reserva> getReservasByRecurso(Long recursoId);
-
-    /**
-     * Buscar reservas en un rango de fechas
-     *
-     * @param start Fecha de inicio
-     * @param end   Fecha de fin
-     * @return Lista de reservas en el rango
-     */
-    List<Reserva> getReservasByDateRange(LocalDateTime start, LocalDateTime end);
-
+    @Transactional
+    boolean deleteReserva(Long id);
 }

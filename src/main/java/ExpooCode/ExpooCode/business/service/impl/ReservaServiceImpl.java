@@ -1,124 +1,137 @@
 package ExpooCode.ExpooCode.business.service.impl;
 
+import ExpooCode.ExpooCode.business.DTO.ReservaDTO;
 import ExpooCode.ExpooCode.business.service.ReservaService;
+import ExpooCode.ExpooCode.persistence.dao.ExtraDao;
+import ExpooCode.ExpooCode.persistence.dao.RecursoDao;
+import ExpooCode.ExpooCode.persistence.dao.ReservaDao;
+import ExpooCode.ExpooCode.persistence.dao.UsuarioDao;
+import ExpooCode.ExpooCode.persistence.entity.Extra;
+import ExpooCode.ExpooCode.persistence.entity.Recurso;
 import ExpooCode.ExpooCode.persistence.entity.Reserva;
-import ExpooCode.ExpooCode.persistence.repository.ReservaRepository;
+import ExpooCode.ExpooCode.persistence.entity.Usuario;
+import ExpooCode.ExpooCode.persistence.enums.EstadoReserva;
+import ExpooCode.ExpooCode.persistence.mapper.ReservaMapper;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @Transactional
-//@RequiredArgsConstructor
 @Slf4j
 public class ReservaServiceImpl implements ReservaService {
 
-    private final ReservaRepository reservaRepository;
+    private final ReservaDao reservaDao;
+    private final UsuarioDao usuarioDao;
+    private final RecursoDao recursoDao;
+    private final ExtraDao extraDao;
+    private final ReservaMapper reservaMapper;
 
-    public ReservaServiceImpl(ReservaRepository reservaRepository) {
-        this.reservaRepository = reservaRepository;
+    public ReservaServiceImpl(ReservaDao reservaDao,
+                              UsuarioDao usuarioDao,
+                              RecursoDao recursoDao,
+                              ExtraDao extraDao, //TODO: Crear flujo EXTRA PARA usar aca el DAO
+                              ReservaMapper reservaMapper) {
+        this.reservaDao = reservaDao;
+        this.usuarioDao = usuarioDao;
+        this.recursoDao = recursoDao;
+        this.extraDao = extraDao;
+        this.reservaMapper = reservaMapper;
     }
 
     @Override
     @Transactional
-    public Reserva createReserva(Reserva reserva) {
-        // Validar fechas
-        if (reserva.getFechaInicio() == null || reserva.getFechaFin() == null ||
-                reserva.getFechaInicio().isAfter(reserva.getFechaFin())) {
-            throw new IllegalArgumentException("La fecha de inicio debe ser anterior a la fecha de fin.");
-        }
-
-        // Validar recurso
-        if (reserva.getRecurso() == null || reserva.getUsuario() == null) {
-            throw new IllegalArgumentException("El recurso y el usuario son obligatorios.");
-        }
-
-
-        // Validar disponibilidad del RECURSO (excluyendo la misma reserva) TODO: METODO PARA REALIZAR VALIDACION CORRECTA DE LA DISPONIBILIDAD DEL REPOSITORY?
-        /*
-        boolean ocupado = reservaRepository.existsByRecurso_IdRecursoAndFechaInicioLessThanEqualAndFechaFinGreaterThanEqual(
-                reserva.getRecurso().getIdRecurso(),
-                reserva.getFechaFin(),
-                reserva.getFechaInicio()
-        );
-
-        if (ocupado) {
-            throw new RuntimeException("El recurso no está disponible en las fechas seleccionadas.");
-        } */
-
-        return reservaRepository.save(reserva);
+    public List<ReservaDTO> getAllReservas() {
+        return reservaMapper.toDTOList(reservaDao.findAll());
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Reserva getReservaById(Long id) {
-        return reservaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Reserva no encontrada con ID: " + id));
+    public ReservaDTO getReservaById(Long id) {
+        if (id == null || id <= 0) {
+            throw new RuntimeException("Error interno: ID inválido");
+        }
+
+        Reserva reserva = reservaDao.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Reserva no encontrada"));
+
+        return reservaMapper.toDTO(reserva);
     }
 
+
     @Override
-    @Transactional(readOnly = true)
-    public List<Reserva> getAllReservas() {
-        return reservaRepository.findAll();
+    @Transactional
+    public List<ReservaDTO> getReservasByUsuario(Long idUsuario) {
+        return reservaMapper.toDTOList(reservaDao.findByUsuarioId(idUsuario));
     }
 
     @Override
     @Transactional
-    public Reserva updateReserva(Long id, Reserva reserva) {
-        Reserva reservaExistente = reservaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Reserva no encontrada con ID: " + id));
+    public ReservaDTO createReserva(ReservaDTO reservaDTO) {
+        Reserva reserva = reservaMapper.toEntity(reservaDTO);
+        Usuario usuario = usuarioDao.findById(reservaDTO.getUsuarioId())
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + reservaDTO.getUsuarioId()));
 
-        // No se puede cambiar el recurso
-        if (!reservaExistente.getRecurso().getIdRecurso().equals(reserva.getRecurso().getIdRecurso())) {
-            throw new IllegalArgumentException("No se puede cambiar el recurso de una reserva existente.");
+        reserva.setUsuario(usuario);
+        if (reservaDTO.getExtraId() != null) {
+            Extra extra = extraDao.findById(reservaDTO.getExtraId())
+                    .orElseThrow(() -> new EntityNotFoundException("Extra no encontrado con id: " + reservaDTO.getExtraId()));
+            reserva.setExtra(extra);
+            log.info("Extra encontrado: {}", extra.getNombre());
+        } else {
+            log.info("No se incluyó extra en la reserva");
         }
-
-        // Validar fechas
-        if (reserva.getFechaInicio() == null || reserva.getFechaFin() == null ||
-                reserva.getFechaInicio().isAfter(reserva.getFechaFin())) {
-            throw new IllegalArgumentException("La fecha de inicio debe ser anterior a la fecha de fin.");
-        }
-
-        // Validar disponibilidad (excluyendo la misma reserva) TODO: METODO PARA REALIZAR VALIDACION CORRECTA DE LAS DISPONIBILIDAD DEL REPOSITORY?
-        /*
-        boolean ocupado = reservaRepository.existsByRecurso_IdRecursoAndFechaInicioLessThanEqualAndFechaFinGreaterThanEqualAndIdReservaNot(
-                reserva.getRecurso().getIdRecurso(),
-                reserva.getFechaFin(),
-                reserva.getFechaInicio(),
-                id
-        );
-
-        if (ocupado) {
-            throw new RuntimeException("El recurso no está disponible en las nuevas fechas seleccionadas.");
-        }*/
-
-        reservaExistente.setFechaInicio(reserva.getFechaInicio());
-        reservaExistente.setFechaFin(reserva.getFechaFin());
-        reservaExistente.setEstado(reserva.getEstado());
-
-        return reservaRepository.save(reservaExistente);
+        Recurso recurso = recursoDao.findById(reservaDTO.getRecursoId())
+                .orElseThrow(() -> new EntityNotFoundException("Recurso no encontrado con id: " + reservaDTO.getRecursoId()));
+        reserva.setRecurso(recurso);
+        log.info("Recurso encontrado: {}", recurso.getNombre());
+        reserva.setFechaInicio(LocalDateTime.now());
+        reserva.setEstado(EstadoReserva.Pendiente);
+        log.info("Guardando reserva...");
+        Reserva saved = reservaDao.save(reserva);
+        log.info("Reserva creada exitosamente con ID: {}", saved.getIdReserva());
+        return reservaMapper.toDTO(saved);
     }
 
     @Override
     @Transactional
-    public void deleteReserva(Long id) {
-        Reserva reserva = reservaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Reserva no encontrada con ID: " + id));
-        reservaRepository.delete(reserva);
+    public ReservaDTO updateReserva(Long id, ReservaDTO reservaDTO) {
+        if (id == null || id <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error interno: ID inválido");
+        }
+
+        Reserva reserva = reservaDao.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Reserva no encontrada"));
+
+        if (reservaDTO.getFechaInicio() != null) {
+            reserva.setFechaInicio(reservaDTO.getFechaInicio());
+        }
+        if (reservaDTO.getEstado() != null) {
+            reserva.setEstado(reservaDTO.getEstado());
+        }
+        if (reservaDTO.getUsuarioId() != null) {
+            Usuario usuario = usuarioDao.findById(reservaDTO.getUsuarioId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            "Usuario no encontrado con id: " + reservaDTO.getUsuarioId()));
+            reserva.setUsuario(usuario);
+        }
+
+        Reserva updated = reservaDao.save(reserva);
+        return reservaMapper.toDTO(updated);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<Reserva> getReservasByRecurso(Long recursoId) {
-        return reservaRepository.findByRecurso_IdRecurso(recursoId);
-    }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<Reserva> getReservasByDateRange(LocalDateTime start, LocalDateTime end) {
-        return reservaRepository.findByFechaInicioBetween(start, end);
+    @Transactional
+    public boolean deleteReserva(Long id) {
+        return reservaDao.findById(id).map(reserva -> {
+            reservaDao.delete(reserva);
+            return true;
+        }).orElse(false);
     }
 }

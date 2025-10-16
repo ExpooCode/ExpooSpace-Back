@@ -13,11 +13,8 @@ public interface ReservaMapper {
 
     // De entidad a DTO
     @Mapping(source = "usuario.idUsuario", target = "usuarioId")
-    @Mapping(source = "usuario.nombre", target = "usuarioNombre")
     @Mapping(source = "recurso.idRecurso", target = "recursoId")
-    @Mapping(source = "recurso.nombre", target = "recursoNombre")
     @Mapping(source = "extra.idExtra", target = "extraId")
-    @Mapping(source = "extra.nombre", target = "extraNombre")
     @Mapping(source = "pago.idPago", target = "pagoId")
     @Mapping(source = "pago.estado", target = "pagoEstado")
     ReservaDTO toDTO(Reserva reserva);
