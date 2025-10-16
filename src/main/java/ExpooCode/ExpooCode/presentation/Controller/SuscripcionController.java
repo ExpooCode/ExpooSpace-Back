@@ -1,132 +1,66 @@
 package ExpooCode.ExpooCode.presentation.Controller;
 
+import ExpooCode.ExpooCode.business.DTO.SuscripcionDTO;
+import ExpooCode.ExpooCode.business.service.SuscripcionService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-
-
 
 @RestController
 @RequestMapping("/api/expooSpace/suscripciones")
-@Tag(name = "Suscripciones", description = "Operaciones relacionadas con la gestión de suscripciones")
+@Tag(name = "Suscripciones", description = "Gestión de suscripciones de los usuarios")
 public class SuscripcionController {
 
-    // GET: Listar todas las suscripciones
+    private final SuscripcionService suscripcionService;
+
+    public SuscripcionController(SuscripcionService suscripcionService) {
+        this.suscripcionService = suscripcionService;
+    }
+
+    @Operation(summary = "Listar suscripciones")
+    @ApiResponse(responseCode = "200", description = "Listado obtenido correctamente")
     @GetMapping
-    @Operation(summary = "Listar suscripciones", description = "Obtiene todas las suscripciones (Admin ve todas, usuarios ven propias).")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista obtenida exitosamente"),
-            @ApiResponse(responseCode = "401", description = "No autenticado"),
-            @ApiResponse(responseCode = "403", description = "Acceso denegado"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-    })
-    public ResponseEntity<List<String>> listarSuscripciones() {
-        List<String> suscripciones = new ArrayList<>();
-        suscripciones.add("Suscripción Básica");
-        suscripciones.add("Suscripción Premium");
-        return ResponseEntity.ok(suscripciones);
+    public ResponseEntity<List<SuscripcionDTO>> listar() {
+        return ResponseEntity.ok(suscripcionService.listarSuscripciones());
     }
 
-    // POST: Crear suscripción
+    @Operation(summary = "Crear suscripción")
+    @ApiResponse(responseCode = "201", description = "Suscripción creada correctamente")
     @PostMapping
-    @Operation(summary = "Crear una suscripción", description = "Permite a un usuario crear una nueva suscripción.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Suscripción creada exitosamente"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-            @ApiResponse(responseCode = "401", description = "No autenticado"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-    })
-    public ResponseEntity<String> crearSuscripcion(
-            @Parameter(description = "Tipo de plan", example = "Premium") @RequestParam String tipoPlan,
-            @Parameter(description = "ID del usuario", example = "123") @RequestParam Long idUsuario
-    ) {
-        return ResponseEntity.status(201).body("Suscripción creada para usuario " + idUsuario + " con plan " + tipoPlan);
+    public ResponseEntity<SuscripcionDTO> crear(@RequestBody SuscripcionDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(suscripcionService.crearSuscripcion(dto));
     }
 
-    // GET: Obtener detalle de suscripción por ID
-    @GetMapping("/{id}")
-    @Operation(summary = "Obtener detalle de suscripción", description = "Devuelve la información detallada de una suscripción.")
-    @ApiResponses(value = {
+    @Operation(summary = "Obtener suscripción por ID")
+    @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Suscripción encontrada"),
-            @ApiResponse(responseCode = "401", description = "No autenticado"),
-            @ApiResponse(responseCode = "403", description = "Acceso denegado"),
             @ApiResponse(responseCode = "404", description = "Suscripción no encontrada")
     })
-    public ResponseEntity<String> obtenerSuscripcionPorId(
-            @Parameter(description = "ID de la suscripción", example = "1") @PathVariable Long id
-    ) {
-        return ResponseEntity.ok("Detalle de suscripción con ID: " + id);
+    @GetMapping("/{id}")
+    public ResponseEntity<SuscripcionDTO> obtener(@PathVariable Long id) {
+        SuscripcionDTO dto = suscripcionService.obtenerSuscripcion(id);
+        return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
     }
 
-    // PUT: Actualizar suscripción
+    @Operation(summary = "Actualizar suscripción")
+    @ApiResponse(responseCode = "200", description = "Suscripción actualizada correctamente")
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar suscripción", description = "Permite actualizar el plan de una suscripción existente.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Suscripción actualizada correctamente"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-            @ApiResponse(responseCode = "401", description = "No autenticado"),
-            @ApiResponse(responseCode = "403", description = "Acceso denegado"),
-            @ApiResponse(responseCode = "404", description = "Suscripción no encontrada"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-    })
-    public ResponseEntity<String> actualizarSuscripcion(
-            @Parameter(description = "ID de la suscripción", example = "1") @PathVariable Long id,
-            @Parameter(description = "Nuevo plan", example = "Corporativo") @RequestParam String nuevoPlan
-    ) {
-        return ResponseEntity.ok("Suscripción con ID " + id + " actualizada al plan " + nuevoPlan);
+    public ResponseEntity<SuscripcionDTO> actualizar(@PathVariable Long id, @RequestBody SuscripcionDTO dto) {
+        SuscripcionDTO actualizada = suscripcionService.actualizarSuscripcion(id, dto);
+        return actualizada != null ? ResponseEntity.ok(actualizada) : ResponseEntity.notFound().build();
     }
 
-    // DELETE: Cancelar suscripción
+    @Operation(summary = "Eliminar suscripción")
+    @ApiResponse(responseCode = "204", description = "Suscripción eliminada correctamente")
     @DeleteMapping("/{id}")
-    @Operation(summary = "Cancelar suscripción", description = "Permite cancelar una suscripción por su ID.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Suscripción cancelada exitosamente"),
-            @ApiResponse(responseCode = "401", description = "No autenticado"),
-            @ApiResponse(responseCode = "403", description = "Acceso denegado"),
-            @ApiResponse(responseCode = "404", description = "Suscripción no encontrada"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-    })
-    public ResponseEntity<Void> cancelarSuscripcion(
-            @Parameter(description = "ID de la suscripción", example = "1") @PathVariable Long id
-    ) {
-        return ResponseEntity.noContent().build();
-    }
-
-    // GET: Tipos de planes disponibles
-    @GetMapping("/planes")
-    @Operation(summary = "Obtener tipos de planes disponibles", description = "Devuelve la lista de planes disponibles para suscripción.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de planes obtenida exitosamente"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-    })
-    public ResponseEntity<List<String>> obtenerTiposDePlanes() {
-        List<String> planes = new ArrayList<>();
-        planes.add("Básico");
-        planes.add("Premium");
-        planes.add("Corporativo");
-        return ResponseEntity.ok(planes);
-    }
-
-    // POST: Renovar suscripción
-    @PostMapping("/{id}/renovar")
-    @Operation(summary = "Renovar suscripción", description = "Permite renovar una suscripción activa.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Suscripción renovada exitosamente"),
-            @ApiResponse(responseCode = "401", description = "No autenticado"),
-            @ApiResponse(responseCode = "403", description = "Acceso denegado"),
-            @ApiResponse(responseCode = "404", description = "Suscripción no encontrada"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-    })
-    public ResponseEntity<String> renovarSuscripcion(
-            @Parameter(description = "ID de la suscripción", example = "1") @PathVariable Long id
-    ) {
-        return ResponseEntity.ok("Suscripción con ID " + id + " renovada exitosamente.");
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        boolean eliminada = suscripcionService.eliminarSuscripcion(id);
+        return eliminada ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 }
