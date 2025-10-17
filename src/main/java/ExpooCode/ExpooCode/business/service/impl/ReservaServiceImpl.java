@@ -74,10 +74,19 @@ public class ReservaServiceImpl implements ReservaService {
     @Transactional
     public ReservaDTO createReserva(ReservaDTO reservaDTO) {
         Reserva reserva = reservaMapper.toEntity(reservaDTO);
+
+        // 1. Validar Usuario
         Usuario usuario = usuarioDao.findById(reservaDTO.getUsuarioId())
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + reservaDTO.getUsuarioId()));
-
         reserva.setUsuario(usuario);
+
+        // 2. Validar Recurso (ANTES del Extra) ⭐
+        Recurso recurso = recursoDao.findById(reservaDTO.getRecursoId())
+                .orElseThrow(() -> new EntityNotFoundException("Recurso no encontrado con id: " + reservaDTO.getRecursoId()));
+        reserva.setRecurso(recurso);
+        log.info("Recurso encontrado: {}", recurso.getNombre());
+
+        // 3. Validar Extra (DESPUÉS del Recurso) ⭐
         if (reservaDTO.getExtraId() != null) {
             Extra extra = extraDao.findById(reservaDTO.getExtraId())
                     .orElseThrow(() -> new EntityNotFoundException("Extra no encontrado con id: " + reservaDTO.getExtraId()));
@@ -86,10 +95,7 @@ public class ReservaServiceImpl implements ReservaService {
         } else {
             log.info("No se incluyó extra en la reserva");
         }
-        Recurso recurso = recursoDao.findById(reservaDTO.getRecursoId())
-                .orElseThrow(() -> new EntityNotFoundException("Recurso no encontrado con id: " + reservaDTO.getRecursoId()));
-        reserva.setRecurso(recurso);
-        log.info("Recurso encontrado: {}", recurso.getNombre());
+
         reserva.setFechaInicio(LocalDateTime.now());
         reserva.setEstado(EstadoReserva.Pendiente);
         log.info("Guardando reserva...");

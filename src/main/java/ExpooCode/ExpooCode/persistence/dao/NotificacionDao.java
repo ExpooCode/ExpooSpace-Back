@@ -28,8 +28,8 @@ public class NotificacionDao {
         return repository.save(notificacion);
     }
 
-    public void saveAll(List<Notificacion> notificaciones) {
-        repository.saveAll(notificaciones);
+    public List<Notificacion> saveAll(List<Notificacion> notificaciones) {
+        return saveAll(notificaciones);
     }
 
     public void delete(Notificacion notificacion) {

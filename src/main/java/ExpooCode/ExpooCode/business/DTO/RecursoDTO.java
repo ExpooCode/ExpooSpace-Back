@@ -1,7 +1,6 @@
 package ExpooCode.ExpooCode.business.DTO;
 
 import ExpooCode.ExpooCode.persistence.enums.EstadoRecurso;
-import ExpooCode.ExpooCode.persistence.enums.EstadoUsuario;
 import ExpooCode.ExpooCode.persistence.enums.Tipo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EnumType;
@@ -17,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class RecursoDTO {
 
     @Schema(description = "ID único del recurso", example = "15", accessMode = Schema.AccessMode.READ_ONLY)
-    private Integer idRecurso;
+    private Long idRecurso;
 
     @Schema(description = "Nombre del recurso", example = "Sala de Reuniones A", required = true)
     private String nombre;
