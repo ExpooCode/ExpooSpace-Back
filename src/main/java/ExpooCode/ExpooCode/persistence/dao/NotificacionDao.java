@@ -29,8 +29,9 @@ public class NotificacionDao {
     }
 
     public List<Notificacion> saveAll(List<Notificacion> notificaciones) {
-        return saveAll(notificaciones);
+        return repository.saveAll(notificaciones);
     }
+
 
     public void delete(Notificacion notificacion) {
         repository.delete(notificacion);
