@@ -262,36 +262,72 @@ public class ReporteServiceTest {
         verify(reporteDao, never()).delete(any());
     }
 
+
     // ==================== GENERAR REPORTE OCUPACION ====================
 
     @Test
     @DisplayName("generarReporteOcupacion - Debe generar reporte de ocupación exitosamente")
     public void generarReporteOcupacion_DebeGenerarReporteExitosamente() {
         // Given
+        ReporteDTO reporteEntrada = new ReporteDTO();
+        reporteEntrada.setIdUsuario(12L);
+        reporteEntrada.setTipo(TipoReporte.Ocupacion);
+        reporteEntrada.setContenido("");
+
         Reporte reporteOcupacion = new Reporte();
         reporteOcupacion.setIdReporte(102L);
+        reporteOcupacion.setUsuario(usuario);
         reporteOcupacion.setTipo(TipoReporte.Ocupacion);
-        reporteOcupacion.setContenido("Reporte de ocupación generado automáticamente");
+        reporteOcupacion.setContenido("Reporte de tipo Ocupacion generado automáticamente");
         reporteOcupacion.setFechaGeneracion(LocalDateTime.now());
 
         ReporteDTO reporteOcupacionDTO = new ReporteDTO();
         reporteOcupacionDTO.setIdReporte(102L);
+        reporteOcupacionDTO.setIdUsuario(12L);
         reporteOcupacionDTO.setTipo(TipoReporte.Ocupacion);
-        reporteOcupacionDTO.setContenido("Reporte de ocupación generado automáticamente");
+        reporteOcupacionDTO.setContenido("Reporte de tipo Ocupacion generado automáticamente");
 
+        when(reporteMapper.toEntity(reporteEntrada)).thenReturn(new Reporte());
+        when(usuarioDao.findById(12L)).thenReturn(Optional.of(usuario));
         when(reporteDao.save(any(Reporte.class))).thenReturn(reporteOcupacion);
         when(reporteMapper.toDTO(reporteOcupacion)).thenReturn(reporteOcupacionDTO);
 
         // When
-        ReporteDTO resultado = reporteService.generarReporteOcupacion();
+        ReporteDTO resultado = reporteService.generarReporteOcupacion(reporteEntrada);
 
         // Then
         assertThat(resultado).isNotNull();
+        assertThat(resultado.getIdReporte()).isEqualTo(102L);
         assertThat(resultado.getTipo()).isEqualTo(TipoReporte.Ocupacion);
-        assertThat(resultado.getContenido()).contains("ocupación");
+        assertThat(resultado.getContenido()).contains("Ocupacion");
+        verify(reporteMapper).toEntity(reporteEntrada);
+        verify(usuarioDao).findById(12L);
         verify(reporteDao).save(any(Reporte.class));
-        verify(reporteMapper).toDTO(any(Reporte.class));
+        verify(reporteMapper).toDTO(reporteOcupacion);
     }
+
+    @Test
+    @DisplayName("generarReporteOcupacion - Debe lanzar excepción cuando usuario no existe")
+    public void generarReporteOcupacion_DebeLanzarExcepcionCuandoUsuarioNoExiste() {
+        // Given
+        ReporteDTO reporteEntrada = new ReporteDTO();
+        reporteEntrada.setIdUsuario(999L);
+        reporteEntrada.setTipo(TipoReporte.Ocupacion);
+
+        when(reporteMapper.toEntity(reporteEntrada)).thenReturn(new Reporte());
+        when(usuarioDao.findById(999L)).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThatThrownBy(() -> reporteService.generarReporteOcupacion(reporteEntrada))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Usuario no encontrado con id: 999");
+
+        verify(usuarioDao).findById(999L);
+        verify(reporteDao, never()).save(any());
+    }
+
+
+    // ==================== GENERAR REPORTE INGRESOS ====================
 
     // ==================== GENERAR REPORTE INGRESOS ====================
 
@@ -299,31 +335,62 @@ public class ReporteServiceTest {
     @DisplayName("generarReporteIngresos - Debe generar reporte de ingresos exitosamente")
     public void generarReporteIngresos_DebeGenerarReporteExitosamente() {
         // Given
+        ReporteDTO reporteEntrada = new ReporteDTO();
+        reporteEntrada.setIdUsuario(12L);
+        reporteEntrada.setTipo(TipoReporte.Ingresos);
+        reporteEntrada.setContenido("");
+
         Reporte reporteIngresos = new Reporte();
         reporteIngresos.setIdReporte(103L);
+        reporteIngresos.setUsuario(usuario);
         reporteIngresos.setTipo(TipoReporte.Ingresos);
-        reporteIngresos.setContenido("Reporte de ingresos generado automáticamente");
+        reporteIngresos.setContenido("Reporte de tipo Ingresos generado automáticamente");
         reporteIngresos.setFechaGeneracion(LocalDateTime.now());
 
         ReporteDTO reporteIngresosDTO = new ReporteDTO();
         reporteIngresosDTO.setIdReporte(103L);
+        reporteIngresosDTO.setIdUsuario(12L);
         reporteIngresosDTO.setTipo(TipoReporte.Ingresos);
-        reporteIngresosDTO.setContenido("Reporte de ingresos generado automáticamente");
+        reporteIngresosDTO.setContenido("Reporte de tipo Ingresos generado automáticamente");
 
+        when(reporteMapper.toEntity(reporteEntrada)).thenReturn(new Reporte());
+        when(usuarioDao.findById(12L)).thenReturn(Optional.of(usuario));
         when(reporteDao.save(any(Reporte.class))).thenReturn(reporteIngresos);
         when(reporteMapper.toDTO(reporteIngresos)).thenReturn(reporteIngresosDTO);
 
         // When
-        ReporteDTO resultado = reporteService.generarReporteIngresos();
+        ReporteDTO resultado = reporteService.generarReporteIngresos(reporteEntrada);
 
         // Then
         assertThat(resultado).isNotNull();
+        assertThat(resultado.getIdReporte()).isEqualTo(103L);
         assertThat(resultado.getTipo()).isEqualTo(TipoReporte.Ingresos);
-        assertThat(resultado.getContenido()).contains("ingresos");
+        assertThat(resultado.getContenido()).contains("Ingresos");
+        verify(reporteMapper).toEntity(reporteEntrada);
+        verify(usuarioDao).findById(12L);
         verify(reporteDao).save(any(Reporte.class));
-        verify(reporteMapper).toDTO(any(Reporte.class));
+        verify(reporteMapper).toDTO(reporteIngresos);
     }
 
+    @Test
+    @DisplayName("generarReporteIngresos - Debe lanzar excepción cuando usuario no existe")
+    public void generarReporteIngresos_DebeLanzarExcepcionCuandoUsuarioNoExiste() {
+        // Given
+        ReporteDTO reporteEntrada = new ReporteDTO();
+        reporteEntrada.setIdUsuario(999L);
+        reporteEntrada.setTipo(TipoReporte.Ingresos);
+
+        when(reporteMapper.toEntity(reporteEntrada)).thenReturn(new Reporte());
+        when(usuarioDao.findById(999L)).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThatThrownBy(() -> reporteService.generarReporteIngresos(reporteEntrada))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Usuario no encontrado con id: 999");
+
+        verify(usuarioDao).findById(999L);
+        verify(reporteDao, never()).save(any());
+    }
     // ==================== TESTS ADICIONALES ====================
 
     @Test

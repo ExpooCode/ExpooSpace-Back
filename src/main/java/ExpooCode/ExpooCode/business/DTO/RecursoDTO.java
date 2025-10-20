@@ -21,13 +21,13 @@ public class RecursoDTO {
     @Schema(description = "Nombre del recurso", example = "Sala de Reuniones A", required = true)
     private String nombre;
 
-    @Schema(description = "Tipo de recurso", example = "SalaDeReunionesSalaDeReuniones", required = true)
+    @Schema(description = "Tipo de recurso", example = "SalaDeReunion", required = true)
     private Tipo tipo;
 
     @Schema(description = "Capacidad del recurso (número de personas o unidades)", example = "20", required = true)
     private Integer capacidad;
 
     @Enumerated(EnumType.STRING)
-    @Schema(description = "Estado del recurso", example = "Activo", required = true)
+    @Schema(description = "Estado del recurso", example = "Disponible", required = true)
     private EstadoRecurso estadoRecurso;
 }

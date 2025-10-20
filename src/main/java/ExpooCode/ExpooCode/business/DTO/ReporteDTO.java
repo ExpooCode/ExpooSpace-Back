@@ -1,6 +1,5 @@
 package ExpooCode.ExpooCode.business.DTO;
 
-import ExpooCode.ExpooCode.persistence.enums.Tipo;
 import ExpooCode.ExpooCode.persistence.enums.TipoReporte;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -18,7 +17,7 @@ public class ReporteDTO {
     @Schema(description = "ID único del reporte", example = "101", accessMode = Schema.AccessMode.READ_ONLY)
     private Long idReporte;
 
-    @Schema(description = "ID del usuario que genera el reporte", example = "12", required = true)
+    @Schema(description = "ID del usuario que genera el reporte", example = "2", required = true)
     private Long idUsuario;
 
     @Schema(description = "Tipo de reporte", example = "Ocupacion", required = true)

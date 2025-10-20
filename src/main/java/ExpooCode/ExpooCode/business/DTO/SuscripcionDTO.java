@@ -1,6 +1,5 @@
 package ExpooCode.ExpooCode.business.DTO;
 
-import ExpooCode.ExpooCode.persistence.entity.Usuario;
 import ExpooCode.ExpooCode.persistence.enums.EstadoSuscripcion;
 import ExpooCode.ExpooCode.persistence.enums.TipoPlan;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,7 +19,7 @@ public class SuscripcionDTO {
     @Schema(description = "ID único de la suscripción", example = "200", accessMode = Schema.AccessMode.READ_ONLY)
     private Long idSuscripcion;
 
-    @Schema(description = "Id del usuario al cual pertenece la suscripcion", example = "123", accessMode = Schema.AccessMode.READ_ONLY)
+    @Schema(description = "Id del usuario al cual pertenece la suscripcion", example = "1", required = true)
     private Long idUsuario;
 
     @Schema(description = "Tipo de plan contratado", example = "Basico", required = true)

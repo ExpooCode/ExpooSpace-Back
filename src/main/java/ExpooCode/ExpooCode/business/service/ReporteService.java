@@ -11,6 +11,6 @@ public interface ReporteService {
     boolean eliminarReporte(Long id);
 
     // extra: reportes específicos
-    ReporteDTO generarReporteOcupacion();
-    ReporteDTO generarReporteIngresos();
+    ReporteDTO generarReporteOcupacion(ReporteDTO dto);
+    ReporteDTO generarReporteIngresos(ReporteDTO dto);
 }

@@ -3,8 +3,6 @@ package ExpooCode.ExpooCode.presentation.Controller;
 import ExpooCode.ExpooCode.business.DTO.ReporteDTO;
 import ExpooCode.ExpooCode.business.service.ReporteService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,13 +48,13 @@ public class ReporteController {
 
     @Operation(summary = "Generar reporte de ocupación")
     @PostMapping("/ocupacion")
-    public ResponseEntity<ReporteDTO> generarReporteOcupacion() {
-        return ResponseEntity.status(HttpStatus.CREATED).body(reporteService.generarReporteOcupacion());
+    public ResponseEntity<ReporteDTO> generarReporteOcupacion(@RequestBody ReporteDTO reporteDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(reporteService.generarReporteOcupacion(reporteDTO));
     }
 
     @Operation(summary = "Generar reporte de ingresos")
     @PostMapping("/ingresos")
-    public ResponseEntity<ReporteDTO> generarReporteIngresos() {
-        return ResponseEntity.status(HttpStatus.CREATED).body(reporteService.generarReporteIngresos());
+    public ResponseEntity<ReporteDTO> generarReporteIngresos(@RequestBody ReporteDTO reporteDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(reporteService.generarReporteIngresos(reporteDTO));
     }
 }

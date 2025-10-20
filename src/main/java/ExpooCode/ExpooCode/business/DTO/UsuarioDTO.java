@@ -27,7 +27,7 @@ public class UsuarioDTO {
     @Schema(description = "Contraseña del usuario", example = "Password123", required = true, minLength = 8)
     private String password;
 
-    @Schema(description = "Rol asignado al usuario", example = "Admin", required = true)
+    @Schema(description = "Rol asignado al usuario", example = "Administrador", required = true)
     private RolUsuario rol;
 
     @Enumerated(EnumType.STRING)

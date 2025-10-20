@@ -76,20 +76,56 @@ public class ReporteServiceImpl implements ReporteService {
     }
 
     @Override
-    public ReporteDTO generarReporteOcupacion() {
-        Reporte reporte = new Reporte();
-        reporte.setTipo(TipoReporte.Ocupacion);
-        reporte.setContenido("Reporte de ocupación generado automáticamente");
-        reporte.setFechaGeneracion(LocalDateTime.now());
-        return reporteMapper.toDTO(reporteDao.save(reporte));
+    public ReporteDTO generarReporteOcupacion(ReporteDTO dto) {
+        //
+        // Mapear el DTO a entidad
+        Reporte entity = reporteMapper.toEntity(dto);
+
+        // Buscar y setear el usuario a partir del idUsuario del DTO
+        Usuario usuario = usuarioDao.findById(dto.getIdUsuario())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + dto.getIdUsuario()));
+
+        entity.setUsuario(usuario); //  aquí se asocia el usuario
+
+        // Fecha siempre actual
+        entity.setFechaGeneracion(LocalDateTime.now());
+
+        //Tipo de reporte
+        entity.setTipo(TipoReporte.Ocupacion);
+
+        // Asegurar que el contenido no sea null (evitar error de constraint en DB)
+        if (entity.getContenido() == null || entity.getContenido().isEmpty()) {
+            entity.setContenido("Reporte de tipo " + dto.getTipo() + " generado automáticamente");
+        }
+
+        // Guardar y devolver como DTO
+        return reporteMapper.toDTO(reporteDao.save(entity));
     }
 
     @Override
-    public ReporteDTO generarReporteIngresos() {
-        Reporte reporte = new Reporte();
-        reporte.setTipo(TipoReporte.Ingresos);
-        reporte.setContenido("Reporte de ingresos generado automáticamente");
-        reporte.setFechaGeneracion(LocalDateTime.now());
-        return reporteMapper.toDTO(reporteDao.save(reporte));
+    public ReporteDTO generarReporteIngresos(ReporteDTO dto) {
+        //
+        // Mapear el DTO a entidad
+        Reporte entity = reporteMapper.toEntity(dto);
+
+        // Buscar y setear el usuario a partir del idUsuario del DTO
+        Usuario usuario = usuarioDao.findById(dto.getIdUsuario())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + dto.getIdUsuario()));
+
+        entity.setUsuario(usuario); //  aquí se asocia el usuario
+
+        // Fecha siempre actual
+        entity.setFechaGeneracion(LocalDateTime.now());
+
+        //Tipo de reporte
+        entity.setTipo(TipoReporte.Ingresos);
+
+        // Asegurar que el contenido no sea null (evitar error de constraint en DB)
+        if (entity.getContenido() == null || entity.getContenido().isEmpty()) {
+            entity.setContenido("Reporte de tipo " + dto.getTipo() + " generado automáticamente");
+        }
+
+        // Guardar y devolver como DTO
+        return reporteMapper.toDTO(reporteDao.save(entity));
     }
 }
