@@ -1,6 +1,8 @@
 package ExpooCode.ExpooCode.business.service;
 
+import ExpooCode.ExpooCode.business.DTO.RegisterRequest;
 import ExpooCode.ExpooCode.business.DTO.UsuarioDTO;
+
 import java.util.List;
 
 public interface UsuarioService {
@@ -86,4 +88,6 @@ public interface UsuarioService {
      * @throws RuntimeException Si el usuario no existe
      */
     UsuarioDTO cambiarEstadoUsuario(Long id);
+
+    UsuarioDTO registerPublicUser(RegisterRequest request);
 }

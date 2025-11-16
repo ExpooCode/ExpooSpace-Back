@@ -1,16 +1,19 @@
 package ExpooCode.ExpooCode.business.service.impl;
 
+import ExpooCode.ExpooCode.business.DTO.RegisterRequest;
 import ExpooCode.ExpooCode.business.DTO.UsuarioDTO;
 import ExpooCode.ExpooCode.business.service.UsuarioService;
 import ExpooCode.ExpooCode.persistence.entity.Usuario;
 import ExpooCode.ExpooCode.persistence.enums.EstadoUsuario;
+import ExpooCode.ExpooCode.persistence.enums.RolUsuario;
 import ExpooCode.ExpooCode.persistence.mapper.UsuarioMapper;
 import ExpooCode.ExpooCode.persistence.repository.UsuarioRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +26,43 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, UsuarioMapper usuarioMapper) {
+    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, UsuarioMapper usuarioMapper, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.usuarioMapper = usuarioMapper;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Override
+    @Transactional
+    public UsuarioDTO registerPublicUser(RegisterRequest request) {
+        log.info("📝 Registro público - nuevo usuario: {}", request.getEmail());
+
+
+        if (usuarioRepository.existsByEmail(request.getEmail())) {
+            log.warn("Email ya registrado: {}", request.getEmail());
+            throw new RuntimeException("El email ya está registrado");
+        }
+
+
+        Usuario usuario = new Usuario();
+        usuario.setNombre(request.getNombre());
+        usuario.setEmail(request.getEmail().toLowerCase().trim()); // Normalizar email
+
+
+        usuario.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        // Configuración por defecto para registro público
+        usuario.setRol(RolUsuario.Visitante); // Rol por defecto
+        usuario.setEstado(EstadoUsuario.Activo);
+
+        // Guardar
+        Usuario saved = usuarioRepository.save(usuario);
+
+        log.info("✅ Usuario público registrado: {} con rol {}", saved.getEmail(), saved.getRol());
+
+        return usuarioMapper.toDTO(saved);
     }
 
     @Override
