@@ -128,3 +128,17 @@ tasks.register('openAllureReport') {
         Desktop.getDesktop().browse(new File("$buildDir/reports/allure-report/index.html").toURI())
     }
 }
+
+
+bootJar {
+    enabled = true
+    archiveFileName = 'app.jar'
+
+    // Estrategia para manejar duplicados
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+jar {
+    enabled = false
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
