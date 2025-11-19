@@ -18,17 +18,17 @@ public class ReservaDTO {
     @Schema(description = "ID único de la reserva", example = "101", accessMode = Schema.AccessMode.READ_ONLY)
     private Long idReserva;
 
-    @Schema(description = "ID del usuario que realiza la reserva", example = "10", required = true)
+    @Schema(description = "ID del usuario que realiza la reserva", example = "2", required = true)
     private Long usuarioId;
 
-    @Schema(description = "Nombre del usuario que realiza la reserva", example = "Rafael Pérez", accessMode = Schema.AccessMode.READ_ONLY)
-    private String usuarioNombre;
-
-    @Schema(description = "ID del recurso reservado", example = "5", required = true)
+    @Schema(description = "ID del recurso reservado", example = "1", required = true)
     private Long recursoId;
 
-    @Schema(description = "Nombre del recurso reservado", example = "Sala de reuniones principal", accessMode = Schema.AccessMode.READ_ONLY)
-    private String recursoNombre;
+    @Schema(description = "ID del extra reservado", example = "1", required = false)
+    private Integer extraId;
+
+    @Schema(description = "Nombre del extra reservado", example = "Proyector", accessMode = Schema.AccessMode.READ_ONLY)
+    private String extraNombre;
 
     @Schema(description = "Fecha y hora de inicio de la reserva", example = "2025-09-20T10:00:00", required = true)
     private LocalDateTime fechaInicio;

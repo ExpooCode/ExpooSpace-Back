@@ -18,7 +18,7 @@ public class FacturaDTO {
     @Schema(description = "ID único de la factura", example = "9001", accessMode = Schema.AccessMode.READ_ONLY)
     private Long idFactura;
 
-    @Schema(description = "ID del pago asociado a la factura", example = "501", required = true)
+    @Schema(description = "ID del pago asociado a la factura, para la creacion de la factura la id del pago debe valida y que no haga parte de otra factura, ", example = "501", required = true)
     private Long idPago;
 
     @Schema(description = "Número único de la factura", example = "FAC001", accessMode = Schema.AccessMode.READ_ONLY)

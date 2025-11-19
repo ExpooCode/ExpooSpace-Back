@@ -1,6 +1,6 @@
 package ExpooCode.ExpooCode.persistence.entity;
 
-import ExpooCode.ExpooCode.persistence.enums.EstadoUsuario;
+import ExpooCode.ExpooCode.persistence.enums.EstadoRecurso;
 import ExpooCode.ExpooCode.persistence.enums.Tipo;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,7 +18,7 @@ public class Recurso {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_recurso")
-    private Integer idRecurso;
+    private Long idRecurso;
 
     @Column(name = "nombre", length = 100, nullable = false)
     private String nombre;
@@ -32,7 +32,7 @@ public class Recurso {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false)
-    private EstadoUsuario estadoUsuario;
+    private EstadoRecurso estadoRecurso;
 
     //  Relaciones
     @OneToMany(mappedBy = "recurso", cascade = CascadeType.ALL, orphanRemoval = true)

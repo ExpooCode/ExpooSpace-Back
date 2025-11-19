@@ -13,9 +13,8 @@ public interface ReservaMapper {
 
     // De entidad a DTO
     @Mapping(source = "usuario.idUsuario", target = "usuarioId")
-    @Mapping(source = "usuario.nombre", target = "usuarioNombre")
     @Mapping(source = "recurso.idRecurso", target = "recursoId")
-    @Mapping(source = "recurso.nombre", target = "recursoNombre")
+    @Mapping(source = "extra.idExtra", target = "extraId")
     @Mapping(source = "pago.idPago", target = "pagoId")
     @Mapping(source = "pago.estado", target = "pagoEstado")
     ReservaDTO toDTO(Reserva reserva);
@@ -26,6 +25,7 @@ public interface ReservaMapper {
     @Mapping(target = "idReserva", ignore = true) // Autogenerado por BD
     @Mapping(target = "usuario", ignore = true)
     @Mapping(target = "recurso", ignore = true)
+    @Mapping(target = "extra", ignore = true)
     @Mapping(target = "pago", ignore = true)
     Reserva toEntity(ReservaDTO dto);
 
@@ -33,6 +33,7 @@ public interface ReservaMapper {
     @Mapping(target = "idReserva", ignore = true)
     @Mapping(target = "usuario", ignore = true)
     @Mapping(target = "recurso", ignore = true)
+    @Mapping(target = "extra", ignore = true)
     @Mapping(target = "pago", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDTO(ReservaDTO dto, @MappingTarget Reserva reserva);

@@ -27,6 +27,10 @@ public class Reserva {
     @JoinColumn(name = "id_recurso", nullable = false)
     private Recurso recurso;
 
+    @ManyToOne
+    @JoinColumn(name = "id_extra", nullable = true)
+    private Extra extra;
+
     @Column(name = "fecha_inicio", nullable = false)
     private LocalDateTime fechaInicio;
 

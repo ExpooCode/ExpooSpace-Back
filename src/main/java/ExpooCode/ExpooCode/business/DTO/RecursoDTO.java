@@ -1,6 +1,6 @@
 package ExpooCode.ExpooCode.business.DTO;
 
-import ExpooCode.ExpooCode.persistence.enums.EstadoUsuario;
+import ExpooCode.ExpooCode.persistence.enums.EstadoRecurso;
 import ExpooCode.ExpooCode.persistence.enums.Tipo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EnumType;
@@ -16,18 +16,18 @@ import lombok.NoArgsConstructor;
 public class RecursoDTO {
 
     @Schema(description = "ID único del recurso", example = "15", accessMode = Schema.AccessMode.READ_ONLY)
-    private Integer idRecurso;
+    private Long idRecurso;
 
     @Schema(description = "Nombre del recurso", example = "Sala de Reuniones A", required = true)
     private String nombre;
 
-    @Schema(description = "Tipo de recurso", example = "Escritorio", required = true)
+    @Schema(description = "Tipo de recurso", example = "SalaDeReunion", required = true)
     private Tipo tipo;
 
     @Schema(description = "Capacidad del recurso (número de personas o unidades)", example = "20", required = true)
     private Integer capacidad;
 
     @Enumerated(EnumType.STRING)
-    @Schema(description = "Estado del recurso", example = "Activo", required = true)
-    private EstadoUsuario estadoUsuario;
+    @Schema(description = "Estado del recurso", example = "Disponible", required = true)
+    private EstadoRecurso estadoRecurso;
 }
